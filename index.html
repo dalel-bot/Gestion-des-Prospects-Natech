@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Système de gestion des prospects - Natech Training">
+    <meta name="theme-color" content="#FF8C00">
+    <title>Natech Training - Gestion des Prospects</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://www.natech-training.com/wp-content/uploads/2017/01/cropped-Sans-titre-1-32x32.png">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <img src="https://www.natech-training.com/wp-content/uploads/2017/01/Logo-site-Natech.png" alt="Natech Training">
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#dashboard" class="nav-item active" data-page="dashboard">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+                <span class="badge badge-orange" id="newProspectsCount">0</span>
+            </a>
+            <a href="#prospects" class="nav-item" data-page="prospects">
+                <i class="fas fa-users"></i>
+                <span>Prospects</span>
+                <span class="badge badge-blue" id="totalProspectsCount">0</span>
+            </a>
+            <a href="#formations" class="nav-item" data-page="formations">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Formations</span>
+            </a>
+            <a href="#statistiques" class="nav-item" data-page="statistiques">
+                <i class="fas fa-chart-pie"></i>
+                <span>Statistiques</span>
+            </a>
+            <a href="#calendrier" class="nav-item" data-page="calendrier">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Rappels</span>
+                <span class="badge badge-red" id="rappelsCount">0</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <p class="user-name" id="userName">Utilisateur</p>
+                    <p class="user-email" id="userEmail">user@natech-training.com</p>
+                </div>
+            </div>
+            <button class="btn-logout" id="btnLogout">
+                <i class="fas fa-sign-out-alt"></i>
+                Déconnexion
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="topbar-search">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Rechercher un prospect..." id="globalSearch">
+            </div>
+            
+            <div class="topbar-actions">
+                <button class="btn-icon" id="btnNotifications" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationBadge">0</span>
+                </button>
+                
+                <button class="btn-icon" id="btnAddProspect" title="Ajouter un prospect">
+                    <i class="fas fa-plus"></i>
+                </button>
+                
+                <button class="btn-icon" id="btnRefresh" title="Actualiser">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Page Content Container -->
+        <div class="content-container" id="contentContainer">
+            <!-- Dashboard Page -->
+            <div class="page active" id="dashboardPage">
+                <div class="page-header">
+                    <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+                    <p>Vue d'ensemble de vos prospects et performances</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card stat-orange">
+                        <div class="stat-icon">
+                            <i class="fas fa-phone-volume"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="statsAppeulsJour">0</h3>
+                            <p>Appels aujourd'hui</p>
+                        </div>
+                        <div class="stat-trend">
+                            <i class="fas fa-arrow-up"></i> <span>+12%</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-blue">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="statsARappeler">0</h3>
+                            <p>À rappeler</p>
+                        </div>
+                        <div class="stat-trend urgent">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-green">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="statsInscrits">0</h3>
+                            <p>Inscrits ce mois</p>
+                        </div>
+                        <div class="stat-trend">
+                            <i class="fas fa-arrow-up"></i> <span>+8%</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-purple">
+                        <div class="stat-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="statsTauxConversion">0%</h3>
+                            <p>Taux de conversion</p>
+                        </div>
+                        <div class="stat-trend">
+                            <i class="fas fa-arrow-up"></i> <span>+3%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-bar"></i> Prospects par statut</h3>
+                            <button class="btn-sm">
+                                <i class="fas fa-download"></i> Exporter
+                            </button>
+                        </div>
+                        <canvas id="chartStatuts" style="height: 300px;"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-graduation-cap"></i> Top 5 Formations</h3>
+                            <select class="filter-select">
+                                <option>Ce mois</option>
+                                <option>Ce trimestre</option>
+                                <option>Cette année</option>
+                            </select>
+                        </div>
+                        <canvas id="chartFormations" style="height: 300px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Urgent Prospects -->
+                <div class="urgent-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-fire"></i> Prospects urgents</h2>
+                        <span class="badge badge-red" id="urgentCount">0</span>
+                    </div>
+                    <div id="urgentProspectsList" class="prospects-list">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="activity-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-history"></i> Activité récente</h2>
+                    </div>
+                    <div id="recentActivityList" class="activity-list">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prospects Page -->
+            <div class="page" id="prospectsPage">
+                <div class="page-header">
+                    <h1><i class="fas fa-users"></i> Gestion des Prospects</h1>
+                    <div class="page-actions">
+                        <button class="btn btn-primary" id="btnExportProspects">
+                            <i class="fas fa-file-excel"></i> Exporter Excel
+                        </button>
+                        <button class="btn btn-orange" id="btnNewProspect">
+                            <i class="fas fa-plus"></i> Nouveau Prospect
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters Bar -->
+                <div class="filters-bar">
+                    <div class="filter-group">
+                        <label><i class="fas fa-filter"></i> Statut</label>
+                        <select id="filterStatut" class="filter-select">
+                            <option value="">Tous les statuts</option>
+                            <option value="Nouveau">Nouveau</option>
+                            <option value="À rappeler">À rappeler</option>
+                            <option value="En cours">En cours</option>
+                            <option value="Inscrit">Inscrit</option>
+                            <option value="Perdu">Perdu</option>
+                            <option value="Reporté">Reporté</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label><i class="fas fa-graduation-cap"></i> Catégorie</label>
+                        <select id="filterCategorie" class="filter-select">
+                            <option value="">Toutes les catégories</option>
+                            <option value="Construction Métallique & Soudage">Construction Métallique & Soudage</option>
+                            <option value="Industrie & Maintenance">Industrie & Maintenance</option>
+                            <option value="Logiciels CAO/DAO">Logiciels CAO/DAO</option>
+                            <option value="Sécurité Électronique & Domotique">Sécurité Électronique & Domotique</option>
+                            <option value="Santé & Sécurité au Travail">Santé & Sécurité au Travail</option>
+                            <option value="Sécurité & Sûreté Physique">Sécurité & Sûreté Physique</option>
+                            <option value="Construction Bâtiments">Construction Bâtiments</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label><i class="fas fa-exclamation-triangle"></i> Urgence</label>
+                        <select id="filterUrgence" class="filter-select">
+                            <option value="">Toutes</option>
+                            <option value="Critique">Critique</option>
+                            <option value="Élevée">Élevée</option>
+                            <option value="Moyenne">Moyenne</option>
+                            <option value="Faible">Faible</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label><i class="fas fa-user-tag"></i> Assigné à</label>
+                        <select id="filterUtilisateur" class="filter-select">
+                            <option value="">Tous</option>
+                            <option value="Nasredine">Nasredine</option>
+                            <option value="Amel">Amel</option>
+                            <option value="Khouloud">Khouloud</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-secondary" id="btnResetFilters">
+                        <i class="fas fa-redo"></i> Réinitialiser
+                    </button>
+                </div>
+
+                <!-- Prospects Table -->
+                <div class="table-container">
+                    <table class="prospects-table" id="prospectsTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll"></th>
+                                <th>Nom</th>
+                                <th>Téléphone</th>
+                                <th>Formation</th>
+                                <th>Statut</th>
+                                <th>Urgence</th>
+                                <th>Assigné à</th>
+                                <th>Date appel</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="prospectsTableBody">
+                            <!-- Will be populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Formations Page -->
+            <div class="page" id="formationsPage">
+                <div class="page-header">
+                    <h1><i class="fas fa-graduation-cap"></i> Catalogue des Formations</h1>
+                    <p>Liste complète des formations disponibles</p>
+                </div>
+
+                <div class="formations-grid" id="formationsGrid">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Statistiques Page -->
+            <div class="page" id="statistiquesPage">
+                <div class="page-header">
+                    <h1><i class="fas fa-chart-pie"></i> Statistiques Avancées</h1>
+                    <div class="page-actions">
+                        <select class="filter-select">
+                            <option>Ce mois</option>
+                            <option>3 derniers mois</option>
+                            <option>6 derniers mois</option>
+                            <option>Cette année</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="stats-charts">
+                    <div class="chart-card full-width">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-line"></i> Évolution des prospects</h3>
+                        </div>
+                        <canvas id="chartEvolution" style="height: 350px;"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-pie"></i> Répartition par catégorie</h3>
+                        </div>
+                        <canvas id="chartCategories" style="height: 300px;"></canvas>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-users"></i> Performance par utilisateur</h3>
+                        </div>
+                        <canvas id="chartPerformance" style="height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendrier Page -->
+            <div class="page" id="calendrierPage">
+                <div class="page-header">
+                    <h1><i class="fas fa-calendar-alt"></i> Rappels Programmés</h1>
+                    <p>Gestion de vos rappels et rendez-vous</p>
+                </div>
+
+                <div class="calendar-container" id="calendarContainer">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: Add/Edit Prospect -->
+    <div class="modal" id="prospectModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="modalTitle"><i class="fas fa-user-plus"></i> Nouveau Prospect</h2>
+                <button class="modal-close" id="closeProspectModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="prospectForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Nom complet *</label>
+                            <input type="text" id="prospectNom" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> Téléphone *</label>
+                            <input type="tel" id="prospectTelephone" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-envelope"></i> Email</label>
+                            <input type="email" id="prospectEmail">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-briefcase"></i> Entreprise/Organisme</label>
+                            <input type="text" id="prospectEntreprise">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-graduation-cap"></i> Formation demandée *</label>
+                            <select id="prospectFormation" required>
+                                <option value="">Sélectionner une formation...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user-tag"></i> Statut professionnel</label>
+                            <select id="prospectStatutPro">
+                                <option value="Entreprise">Entreprise</option>
+                                <option value="Salarié">Salarié</option>
+                                <option value="Demandeur d'emploi">Demandeur d'emploi</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-chart-line"></i> Niveau d'expérience</label>
+                            <input type="text" id="prospectNiveau" placeholder="Ex: Débutant, Intermédiaire...">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-exclamation-triangle"></i> Urgence</label>
+                            <select id="prospectUrgence">
+                                <option value="Faible">Faible</option>
+                                <option value="Moyenne">Moyenne</option>
+                                <option value="Élevée">Élevée</option>
+                                <option value="Critique">Critique</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-tag"></i> Statut</label>
+                            <select id="prospectStatut">
+                                <option value="Nouveau">Nouveau</option>
+                                <option value="À rappeler">À rappeler</option>
+                                <option value="En cours">En cours</option>
+                                <option value="Inscrit">Inscrit</option>
+                                <option value="Perdu">Perdu</option>
+                                <option value="Reporté">Reporté</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user-tie"></i> Assigner à</label>
+                            <select id="prospectAssigne">
+                                <option value="Nasredine">Nasredine</option>
+                                <option value="Amel">Amel</option>
+                                <option value="Khouloud">Khouloud</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar"></i> Date de rappel</label>
+                            <input type="datetime-local" id="prospectRappel">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-language"></i> Langue de contact</label>
+                            <select id="prospectLangue">
+                                <option value="Français">Français</option>
+                                <option value="Arabe">Arabe</option>
+                                <option value="Anglais">Anglais</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label><i class="fas fa-sticky-note"></i> Notes</label>
+                        <textarea id="prospectNotes" rows="4"></textarea>
+                    </div>
+
+                    <input type="hidden" id="prospectId">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnCancelProspect">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+                <button type="submit" form="prospectForm" class="btn btn-primary" id="btnSaveProspect">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Prospect Details -->
+    <div class="modal" id="detailsModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2><i class="fas fa-user"></i> Détails du Prospect</h2>
+                <button class="modal-close" id="closeDetailsModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="detailsContent">
+                <!-- Will be populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="toast-content">
+            <p class="toast-title">Succès</p>
+            <p class="toast-message">Opération réussie</p>
+        </div>
+        <button class="toast-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Chargement...</p>
+    </div>
+
+    <!-- Custom JavaScript -->
+    <script src="js/app.js"></script>
+</body>
+</html>
